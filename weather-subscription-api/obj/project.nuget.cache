@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "dgSpecHash": "s4f3zbNhCXk=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api\\weather-subscription-api.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'Microsoft.EntityFrameworkCore.Sqlite (>= 8.0.0)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api\\weather-subscription-api.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api\\weather-subscription-api.csproj",
+      "libraryId": "Microsoft.EntityFrameworkCore.Sqlite",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'Microsoft.EntityFrameworkCore.Design (>= 8.0.0)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api\\weather-subscription-api.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api\\weather-subscription-api.csproj",
+      "libraryId": "Microsoft.EntityFrameworkCore.Design",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "version": 2,
+  "dgSpecHash": "ABQzDwHyH44=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'Moq (>= 4.20.0)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "libraryId": "Moq",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'FluentAssertions (>= 6.9.0)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "libraryId": "FluentAssertions",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'Microsoft.EntityFrameworkCore.InMemory (>= 8.0.0)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "libraryId": "Microsoft.EntityFrameworkCore.InMemory",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'xunit (>= 2.4.2)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "libraryId": "xunit",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'xunit.runner.visualstudio (>= 2.4.5)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "libraryId": "xunit.runner.visualstudio",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1100",
+      "level": "Error",
+      "message": "Unable to resolve 'Microsoft.EntityFrameworkCore.Sqlite (>= 8.0.0)' for 'net8.0'.",
+      "projectPath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "filePath": "C:\\Users\\m.bachrouche\\Documents\\Repo\\WeatherApp\\weather-subscription-api.Tests\\weather-subscription-api.Tests.csproj",
+      "libraryId": "Microsoft.EntityFrameworkCore.Sqlite",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
+}
