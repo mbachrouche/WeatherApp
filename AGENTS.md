@@ -1,419 +1,500 @@
-# Weather Subscription API — AGENTS.md
+# AGENTS.md — Weather Subscription API
+
+Read this file before doing anything in this repo.
+
+-----
 
 ## Project Overview
 
-The **Weather Subscription API** is an ASP.NET Core backend service (net8.0) that manages weather subscriptions and fetches real-time weather data from OpenWeatherMap. Users subscribe by email to receive weather updates for their specified city. The system validates subscriptions, prevents duplicate emails, and integrates external weather APIs.
+A Weather Subscription API built as a Praktikum technical task.
 
----
+Users create a subscription with email, city, and country, then retrieve live weather data for their saved location via OpenWeatherMap.
+
+-----
 
 ## Solution Structure
 
 ```
+
 WeatherSubscription.sln
-├── weather-subscription-api/          (Main API project)
-└── weather-subscription-api.Tests/    (xUnit test project)
+
+├── weather-subscription-api/           ← ASP.NET Core Web API, .NET 8
+
+├── weather-subscription-api.Tests/     ← xUnit test project
+
+└── weather-subscription-frontend/      ← Vue 3 + Vite (bonus, Task 8)
+
 ```
 
-**Pinned to:** .NET 8.0.421 (via `global.json` with `rollForward: latestPatch`)
+**SDK pinned to:** .NET 8.0.421 via `global.json` (`rollForward: latestPatch`)
 
----
+-----
 
 ## Backend Folder Layout
 
 ```
+
 weather-subscription-api/
-├── appsettings.json                        DB & API keys
-├── Program.cs                              Entry point (minimal stub)
+
 ├── Controllers/
-│   └── SubscriptionsController.cs          POST /api/subscriptions
-├── Domain/
-│   ├── Entities/
-│   │   └── Subscription.cs                 Entity model
-│   └── Interfaces/
-│       ├── ISubscriptionRepository.cs      Data access contract
-│       └── IWeatherService.cs              Weather API contract
+
+│   └── SubscriptionsController.cs
+
 ├── DTOs/
+
 │   ├── Requests/
-│   │   └── CreateSubscriptionRequest.cs    POST body schema
+
+│   │   └── CreateSubscriptionRequest.cs
+
 │   └── Responses/
-│       ├── SubscriptionCreatedResponse.cs  POST 201 response
-│       └── WeatherResponse.cs              Weather fields
+
+│       ├── SubscriptionCreatedResponse.cs
+
+│       └── WeatherResponse.cs
+
+├── Domain/
+
+│   ├── Entities/
+
+│   │   └── Subscription.cs
+
+│   └── Interfaces/
+
+│       ├── ISubscriptionRepository.cs
+
+│       └── IWeatherService.cs
+
 ├── Services/
-│   ├── SubscriptionService.cs              Business logic
-│   └── WeatherService.cs                   OpenWeatherMap integration
+
+│   ├── SubscriptionService.cs
+
+│   └── WeatherService.cs
+
 ├── Infrastructure/
+
 │   ├── Data/
-│   │   ├── AppDbContext.cs                 EF DbContext
-│   │   └── AppDbContextFactory.cs          DesignTimeFactory (for migrations)
-│   ├── External/
-│   │   └── OpenWeatherMapModels.cs         External API DTOs (placeholder)
-│   └── Repositories/
-│       └── SubscriptionRepository.cs       DB operations
+
+│   │   ├── AppDbContext.cs
+
+│   │   ├── AppDbContextFactory.cs
+
+│   │   └── Migrations/               ← EF migrations live here (--output-dir was not set, so currently at weather-subscription-api/Migrations/)
+
+│   ├── Repositories/
+
+│   │   └── SubscriptionRepository.cs
+
+│   └── External/
+
+│       └── OpenWeatherMapModels.cs
+
 ├── Exceptions/
-│   ├── DuplicateEmailException.cs          Duplicate email error
-│   ├── NotFoundException.cs                 Subscription not found
-│   └── WeatherApiException.cs              OpenWeatherMap API failure
-└── Middleware/
-    └── ExceptionHandlingMiddleware.cs      Error response standardization
 
-test-subscription-api.Tests/
-├── Services/
-│   ├── SubscriptionServiceTests.cs         Subscription logic tests
-│   └── WeatherServiceTests.cs              Weather service tests
-├── Repositories/
-│   └── SubscriptionRepositoryTests.cs      Repository tests
-└── TestResults/
-    └── test_results.trx                    xUnit output
-```
+│   ├── DuplicateEmailException.cs
 
----
+│   ├── NotFoundException.cs
 
-## Architecture & Dependency Flow
+│   └── WeatherApiException.cs
+
+├── Middleware/
+
+│   └── ExceptionHandlingMiddleware.cs
+
+├── Program.cs
+
+├── appsettings.json
+
+└── appsettings.Development.json       ← gitignored, holds real OWM key
 
 ```
-SubscriptionsController
-  ↓ (injects)
-SubscriptionService
-  ├→ ISubscriptionRepository (implement: SubscriptionRepository)
-  │  └→ AppDbContext
-  └→ IWeatherService (implement: WeatherService)
-     └→ HttpClient (OpenWeatherMap)
 
-ExceptionHandlingMiddleware
-  └→ Catches & standardizes all exceptions
+-----
+
+## Architecture — Dependency Flow
+
 ```
 
-**Design Principles:**
-- **Controller:** Minimal — route mapping only, no business logic
-- **Service Layer:** Domain logic (validation, orchestration)
-- **Repository Pattern:** Abstracted data access; swap implementations for testing
-- **Exception Handling:** Centralized via middleware; custom exceptions for domain events
-- **Dependency Injection:** Wired in `Program.cs`
+HTTP Request
 
----
+     ↓
+
+Controller          → HTTP only, no business logic
+
+     ↓
+
+SubscriptionService → all business logic here
+
+     ↓              ↘
+
+Repository          WeatherService
+
+     ↓                    ↓
+
+  SQLite           OpenWeatherMap API
+
+```
+
+-----
 
 ## API Endpoints
 
-### 1. POST /api/subscriptions
+### POST /subscriptions
 
-**Purpose:** Create a new weather subscription.
+**Request body:**
 
-**Request Body:**
 ```json
+
 {
+
   "email": "user@example.com",
-  "city": "London"
+
+  "city": "Berlin",
+
+  "country": "DE",
+
+  "zipCode": "10115"
+
 }
+
 ```
 
-**DTO:** [CreateSubscriptionRequest](weather-subscription-api/DTOs/Requests/CreateSubscriptionRequest.cs)
-- `Email` (string, required)
-- `City` (string, required)
+`email`, `city`, `country` are required. `zipCode` is optional.
 
-**Success Response:** HTTP 201 Created
+**Success — 201 Created:**
+
 ```json
+
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
+
+  "id": 1,
+
   "email": "user@example.com",
-  "city": "London",
-  "createdAt": "2026-06-01T10:30:00Z"
+
+  "city": "Berlin",
+
+  "country": "DE",
+
+  "zipCode": "10115",
+
+  "createdAt": "2026-06-01T10:00:00Z"
+
 }
+
 ```
 
-**DTO:** [SubscriptionCreatedResponse](weather-subscription-api/DTOs/Responses/SubscriptionCreatedResponse.cs)
+### GET /subscriptions/{email}/weather
 
-**Error Responses:**
+Lookup key is **email** (not an ID). Returns live weather for the saved location.
 
-| HTTP | Scenario | Exception Type | Body |
-|------|----------|----------------|------|
-| 400 | Email already subscribed | `DuplicateEmailException` | `{ "error": "Email already subscribed for weather updates" }` |
-| 400 | Invalid email format | `ArgumentException` | `{ "error": "Invalid email format" }` |
-| 500 | DB insertion fails | `InvalidOperationException` | `{ "error": "Failed to create subscription" }` |
+**Success — 200 OK:**
 
----
-
-### 2. GET /api/subscriptions/{id}/weather
-
-**Purpose:** Fetch live weather for a subscription's city.
-
-**Route Parameter:**
-- `id` (Guid) — subscription ID
-
-**Success Response:** HTTP 200 OK
 ```json
+
 {
-  "city": "London",
-  "description": "Partly Cloudy",
-  "temperatureCelsius": 18.5,
-  "cloudiness": "Partly Cloudy"
+
+  "city": "Berlin",
+
+  "country": "DE",
+
+  "description": "light rain",
+
+  "temperature": {
+
+    "current": 14.2,
+
+    "min": 11.0,
+
+    "max": 16.5
+
+  },
+
+  "pressure": 1012,
+
+  "humidity": 78,
+
+  "windSpeed": 5.3,
+
+  "cloudiness": "Partly Cloudy",
+
+  "sunrise": "05:42 AM",
+
+  "sunset": "09:11 PM"
+
 }
+
 ```
 
-**DTO:** [WeatherResponse](weather-subscription-api/DTOs/Responses/WeatherResponse.cs)
-- `City` (string)
-- `Description` (string) — e.g., "Scattered clouds"
-- `TemperatureCelsius` (decimal)
+### Error Response Table
 
-**Error Responses:**
+|Scenario                      |Status|
 
-| HTTP | Scenario | Exception Type | Body |
-|------|----------|----------------|------|
-| 404 | Subscription ID not found | `NotFoundException` | `{ "error": "Subscription not found" }` |
-| 503 | OpenWeatherMap API down | `WeatherApiException` | `{ "error": "Weather service unavailable" }` |
+|------------------------------|------|
 
----
+|Missing email / city / country|400   |
 
-## CloudCover Mapping
+|Invalid email format          |400   |
 
-The API maps OpenWeatherMap's `clouds.all` field (0–100%) to human-readable cloudiness:
+|Duplicate email               |409   |
 
-| Cloud % Range | Output |
-|---------------|--------|
-| 0–25% | Clear |
-| 26–75% | Partly Cloudy |
-| 76–100% | Overcast |
+|Email not found               |404   |
 
----
+|City not found on OWM         |404   |
+
+|OpenWeatherMap unavailable    |503   |
+
+|Any other exception           |500   |
+
+**Error body shape:**
+
+```json
+
+{ "error": "A meaningful message here" }
+
+```
+
+-----
+
+## Exception → HTTP Mapping
+
+```
+
+ArgumentException        → 400 Bad Request
+
+DuplicateEmailException  → 409 Conflict
+
+NotFoundException        → 404 Not Found
+
+WeatherApiException      → 503 Service Unavailable
+
+Any other exception      → 500 Internal Server Error
+
+```
+
+-----
 
 ## Subscription Entity
 
-**Namespace:** `WeatherSubscription.Api.Domain.Entities`  
-**File:** [Subscription.cs](weather-subscription-api/Domain/Entities/Subscription.cs)
+**Namespace:** `WeatherSubscriptionApi`
 
 ```csharp
+
 public class Subscription
+
 {
-    public Guid Id { get; set; }
-    public string Email { get; set; } = string.Empty;
-    public string City { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-}
-```
 
-**Properties:**
-- **Id** (Guid) — Primary key, auto-generated
-- **Email** (string) — Email address; must be unique within the DB
-- **City** (string) — Target city for weather subscription
-- **CreatedAt** (DateTime) — UTC timestamp of subscription creation
+    public int Id { get; private set; }
 
-**Validation:**
-- Email: Non-null, valid format, unique in table
-- City: Non-null, non-empty
-- No constructor overloads; properties auto-initialize strings to `string.Empty`
+    public string Email { get; private set; }
 
----
+    public string City { get; private set; }
 
-## WeatherResponse Fields
+    public string Country { get; private set; }
 
-**Namespace:** `WeatherSubscription.Api.DTOs.Responses`  
-**File:** [WeatherResponse.cs](weather-subscription-api/DTOs/Responses/WeatherResponse.cs)
+    public string? ZipCode { get; private set; }
 
-```csharp
-public class WeatherResponse
-{
-    public string City { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public decimal TemperatureCelsius { get; set; }
-}
-```
+    public DateTime CreatedAt { get; private set; }
 
-**Cloudiness Interpretation** (not yet in current entity — **implementation task**):
-- **0–25%:** "Clear"
-- **26–75%:** "Partly Cloudy"
-- **76–100%:** "Overcast"
+    public Subscription(string email, string city, string country, string? zipCode = null)
 
-⚠️ **Contradiction Flagged:** `WeatherResponse` currently has only `City`, `Description`, and `TemperatureCelsius`. The `cloudiness` interpretation (above) is expected as per requirements but is **not yet modeled**. This will be added during Task 5 (API integration).
+    {
 
----
+        // throws ArgumentException if email/city/country are null or whitespace
 
-## Test Project Conventions
+        Email = email.Trim().ToLowerInvariant();
 
-**Framework:** xUnit 2.4.2  
-**Location:** [weather-subscription-api.Tests/](weather-subscription-api.Tests/)
+        City = city.Trim();
 
-**Test Dependencies (from .csproj):**
-- **xunit** 2.4.2 — Test framework
-- **xunit.runner.visualstudio** 2.4.5 — Test runner
-- **Moq** 4.18.4 — Mocking library
-- **FluentAssertions** 6.9.0 — Assertion fluency
-- **Microsoft.EntityFrameworkCore.InMemory** 8.0.0 — In-memory DB (tests only)
+        Country = country.Trim().ToUpperInvariant();
 
-**Convention Rules:**
-- ✅ Always use **xUnit `[Fact]` or `[Theory]`** for test methods
-- ✅ Mock `ISubscriptionRepository` and `IWeatherService` with **Moq 4.18.4**
-- ✅ Use **FluentAssertions** for `result.Should().Be(...)` style assertions
-- ✅ **EF InMemory only** for repository tests; never SQLite in tests
-- ✅ Name test files as `*Tests.cs` (e.g., `SubscriptionServiceTests.cs`)
-- ✅ One test class per service/repo class
-- ✅ Arrange-Act-Assert (AAA) pattern
+        ZipCode = zipCode?.Trim();
 
-**Example Test Structure:**
-```csharp
-[Fact]
-public async Task CreateSubscription_WithValidEmail_ReturnsId()
-{
-    // Arrange
-    var mockRepo = new Mock<ISubscriptionRepository>();
-    var service = new SubscriptionService(mockRepo.Object);
-    var request = new CreateSubscriptionRequest { Email = "test@example.com", City = "London" };
+        CreatedAt = DateTime.UtcNow;
 
-    // Act
-    var result = await service.CreateAsync(request);
-
-    // Assert
-    result.Should().NotBeEmpty();
-}
-```
-
----
-
-## Frontend Layout
-
-⚠️ **Not yet scoped.** Current repo contains backend only (ASP.NET Core API).  
-Future frontend will likely include:
-- Subscription form (email, city)
-- Subscription list view
-- Weather display per subscription
-
----
-
-## Environment & Build Configuration
-
-### Database
-
-- **File:** `subscriptions.db` (SQLite)
-- **Connection String:** `Data Source=subscriptions.db` (from [appsettings.json](weather-subscription-api/appsettings.json))
-- **Location:** Relative to project root; created on first EF migration
-- **Gitignored:** Yes (local dev artifact)
-
-### SDK & Runtime
-
-- **Pinned Version:** .NET 8.0.421
-- **Configuration File:** [global.json](global.json)
-  ```json
-  {
-    "sdk": {
-      "version": "8.0.421",
-      "rollForward": "latestPatch"
     }
+
+    protected Subscription() { } // required by EF Core
+
+}
+
+```
+
+Key facts:
+
+- `Id` is `int`, not Guid
+
+- Email is normalized to lowercase, Country to uppercase on construction
+
+- Private setters — entity is only created via constructor
+
+- Protected parameterless constructor exists for EF Core only
+
+-----
+
+## WeatherResponse DTO
+
+All fields below must be present:
+
+|Field      |Type   |Notes                                   |
+
+|-----------|-------|----------------------------------------|
+
+|city       |string |                                        |
+
+|country    |string |                                        |
+
+|description|string |e.g. “light rain”                       |
+
+|temperature|object |current, min, max (all decimal, Celsius)|
+
+|pressure   |int    |hPa                                     |
+
+|humidity   |int    |percent                                 |
+
+|windSpeed  |decimal|m/s                                     |
+
+|cloudiness |string |mapped (see below)                      |
+
+|sunrise    |string |formatted “hh:mm tt” e.g. “05:42 AM”    |
+
+|sunset     |string |formatted “hh:mm tt” e.g. “09:11 PM”    |
+
+**Cloudiness mapping** (from OWM `clouds.all` 0–100%):
+
+|Range  |Output       |
+
+|-------|-------------|
+
+|0–25%  |Clear        |
+
+|26–75% |Partly Cloudy|
+
+|76–100%|Overcast     |
+
+**Sunrise/sunset:** OWM returns Unix timestamps + timezone offset. Apply the offset before formatting.
+
+-----
+
+## Configuration
+
+**appsettings.json:**
+
+```json
+
+{
+
+  "OpenWeatherMap": {
+
+    "ApiKey": "YOUR_API_KEY_HERE",
+
+    "BaseUrl": "https://api.openweathermap.org/data/2.5"
+
+  },
+
+  "ConnectionStrings": {
+
+    "DefaultConnection": "Data Source=subscriptions.db"
+
   }
-  ```
-- **Effect:** All builds locked to 8.0.421; patch updates allowed (`rollForward: latestPatch`)
 
-### Development Settings
+}
 
-- **File:** `appsettings.Development.json`
-- **Status:** Gitignored (local dev only)
-- **Recommended Contents:**
-  ```json
-  {
-    "OpenWeatherMap": {
-      "ApiKey": "YOUR_DEV_API_KEY"
-    },
-    "Logging": {
-      "LogLevel": {
-        "Default": "Debug"
-      }
-    }
-  }
-  ```
-  (Never commit real API keys to appsettings.json)
+```
 
-### OpenWeatherMap API Configuration
+Never hardcode the API key. Real key goes in `appsettings.Development.json` (gitignored).
 
-- **BaseUrl:** `https://api.openweathermap.org/data/2.5/` (from appsettings.json)
-- **ApiKey:** Injected from config; never hardcoded
-- **Endpoint Used:** `weather?q={city}&appid={apiKey}&units=metric`
+-----
 
----
+## Test Project
+
+**Namespace:** `WeatherSubscription.Api.Tests`
+
+**Packages (weather-subscription-api.Tests.csproj):**
+
+- `xunit` 2.4.2
+
+- `xunit.runner.visualstudio` 2.4.5
+
+- `Microsoft.NET.Test.Sdk` 17.11.1
+
+- `Moq` 4.20.72
+
+- `Castle.Core` 5.1.1 (explicit reference — required for test host)
+
+- `FluentAssertions` 6.9.0
+
+- `Microsoft.EntityFrameworkCore.InMemory` 8.0.0
+
+**Rules:**
+
+- EF InMemory only — never real SQLite in tests
+
+- Each repository test uses its own uniquely named InMemory DB (`Guid.NewGuid().ToString()`)
+
+- Mock `ISubscriptionRepository` and `IWeatherService` with Moq in service tests
+
+- Use FluentAssertions for all assertions
+
+- AAA pattern (Arrange / Act / Assert)
+
+-----
+
+## Development Rules
+
+1. **Always TDD** — write the failing test first, then implement to pass it
+
+1. **No logic in controllers** — controllers call services and return results only
+
+1. **EF InMemory in tests only** — never real SQLite
+
+1. **Never hardcode the OWM API key** — always read from configuration
+
+1. **One task per session** — do not implement multiple layers at once
+
+1. **Run `dotnet test` at the end of every task** — report full output
+
+1. **Do not touch files outside the current task scope**
+
+1. **One focused commit per task** — use the commit message specified in the task prompt
+
+-----
 
 ## Current Implementation Status
 
-| Task | Description | Status |
-|------|-------------|--------|
-| 1 | Set up EF Core DbContext, migrations, and SQLite DB | ☐ |
-| 2 | Implement `SubscriptionRepository` (Add, GetById, GetAll) | ☐ |
-| 3 | Implement `SubscriptionService` (Create, Validate, Duplicate check) | ☐ |
-| 4 | Wire DI & middleware in `Program.cs`; add Swagger | ☐ |
-| 5 | Implement `WeatherService` (call OWM API, map clouds % to cloudiness) | ☐ |
-| 6 | Implement `SubscriptionsController` (Create & GetWeather endpoints) | ☐ |
-| 7 | Write all unit tests (xUnit + Moq + InMemory EF) | ☐ |
-| 8 | End-to-end test (Postman/curl against live API) | ☐ |
+- [x] Task 1 — Domain entity (`Subscription.cs`) + interfaces — 5 tests passing
 
----
+- [x] Task 2 — `AppDbContext`, `SubscriptionRepository`, EF migration — 6 tests passing (11 total)
 
-## Development Rules & Constraints
+- [ ] Task 3 — `WeatherService` + OWM mapping
 
-### TDD Discipline
-- **Always write failing test first** before implementing feature
-- Red → Green → Refactor cycle mandatory
-- Test must express the requirement; code satisfies it
+- [ ] Task 4 — `SubscriptionService` orchestration
 
-### Code Organization
-- **No business logic in controllers** — Controllers invoke services only
-- **Services own validation and orchestration** — Repositories own data access
-- **Exceptions over return codes** — Throw custom exceptions; middleware catches
+- [ ] Task 5 — Controller + DTOs
 
-### Database & Testing
-- **EF InMemory in tests only** — Never SQLite for unit tests
-- **Repository mock for service tests** — No actual DB access
-- **One DB instance per test** — Isolated state; no test pollution
+- [ ] Task 6 — `Program.cs` + DI wiring
 
-### Configuration Management
-- **Never hardcode OWM API key** — Read from config/environment
-- **Never commit secrets** — `.gitignore` covers `.db`, `appsettings.Development.json`
-- **Use `appsettings.json` for non-sensitive defaults** — Overridden by environment-specific files
+- [ ] Task 7 — Middleware + error handling
 
-### Session & Task Management
-- **One task per session** — Focus; avoid context switching
-- **Run `dotnet test` at end of each task** — Verify all tests pass before moving on
-- **Do not touch files outside current task scope** — Minimize diff noise; reduce merge conflicts
-- **Commit between tasks** — Checkpoint each logical unit
+- [ ] Task 8 — Frontend (Vue 3 + Vite)
 
----
-
-## Contradictions Flagged
-
-| Item | Expected | Found | Action |
-|------|----------|-------|--------|
-| WeatherResponse.Cloudiness | Model property for "Clear", "Partly Cloudy", "Overcast" mapping | Not present in current entity | Implement in Task 5 when adding OWM integration |
-| Program.cs Integration | DI container, Swagger, EF migrations, middleware registration | Minimal stub (only root endpoint) | Implement in Task 4 (Program.cs wiring) |
-| Test Implementations | Actual test methods with assertions | Stubs throwing `NotImplementedException` | Implement in Task 7 (Unit tests) |
-| OpenWeatherMapModels | DTO classes for OWM API response deserialization | Placeholder class only | Implement in Task 5 (API integration) |
-
----
+-----
 
 ## Quick Commands
 
 ```bash
-# Restore dependencies
+
 dotnet restore
 
-# Build solution
 dotnet build
 
-# Run all unit tests (xUnit)
 dotnet test
 
-# Run API locally (http://localhost:5000)
 dotnet run --project weather-subscription-api
 
-# Create EF migration
-dotnet ef migrations add InitialCreate --project weather-subscription-api
+# Migrations
 
-# Apply migration (creates subscriptions.db)
-dotnet ef database update --project weather-subscription-api
+dotnet ef migrations add <Name> --project weather-subscription-api --startup-project weather-subscription-api
 
-# Clean
-dotnet clean
+dotnet ef database update --project weather-subscription-api --startup-project weather-subscription-api
+
 ```
-
----
-
-## References
-
-- **Entity Framework Core:** [Learn EF Core](https://docs.microsoft.com/en-us/ef/core/)
-- **xUnit Testing:** [xUnit.net](https://xunit.net/)
-- **Moq Documentation:** [Moq GitHub](https://github.com/Moq/moq4)
-- **OpenWeatherMap API:** [API Docs](https://openweathermap.org/api)
-- **ASP.NET Core Middleware:** [Custom Middleware](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware)
+ 
