@@ -5,6 +5,6 @@ namespace WeatherSubscription.Api.Domain.Interfaces
 {
     public interface IWeatherService
     {
-        Task<WeatherResponse> GetWeatherForCityAsync(string city);
+        Task<WeatherResponse> GetWeatherAsync(string city, string country);
     }
 }

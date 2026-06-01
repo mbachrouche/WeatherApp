@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using WeatherSubscription.Api.Domain.Entities;
 using WeatherSubscription.Api.Domain.Interfaces;
@@ -8,17 +6,17 @@ namespace WeatherSubscription.Api.Infrastructure.Repositories
 {
     public class SubscriptionRepository : ISubscriptionRepository
     {
-        public Task AddAsync(Subscription subscription)
+        public Task<Subscription?> GetByEmailAsync(string email)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Subscription>> GetAllAsync()
+        public Task<Subscription> CreateAsync(Subscription subscription)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Subscription?> GetByIdAsync(Guid id)
+        public Task<bool> ExistsAsync(string email)
         {
             throw new NotImplementedException();
         }

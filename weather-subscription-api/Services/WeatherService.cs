@@ -6,13 +6,9 @@ namespace WeatherSubscription.Api.Services
 {
     public class WeatherService : IWeatherService
     {
-        public WeatherService()
+        public Task<WeatherResponse> GetWeatherAsync(string city, string country)
         {
-        }
-
-        public Task<WeatherResponse> GetWeatherForCityAsync(string city)
-        {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
