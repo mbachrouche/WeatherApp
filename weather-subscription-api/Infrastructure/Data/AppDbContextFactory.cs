@@ -7,7 +7,9 @@ namespace WeatherSubscription.Api.Infrastructure.Data
     {
         public AppDbContext CreateDbContext(string[] args)
         {
-            throw new System.NotImplementedException();
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlite("Data Source=subscriptions.db");
+            return new AppDbContext(optionsBuilder.Options);
         }
     }
 }
