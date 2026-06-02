@@ -2,7 +2,7 @@
 
 Read this file before doing anything in this repo.
 
------
+---
 
 ## Project Overview
 
@@ -10,7 +10,7 @@ A Weather Subscription API built as a Praktikum technical task.
 
 Users create a subscription with email, city, and country, then retrieve live weather data for their saved location via OpenWeatherMap.
 
------
+---
 
 ## Solution Structure
 
@@ -28,7 +28,7 @@ WeatherSubscription.sln
 
 **SDK pinned to:** .NET 8.0.421 via `global.json` (`rollForward: latestPatch`)
 
------
+---
 
 ## Backend Folder Layout
 
@@ -108,7 +108,7 @@ weather-subscription-api/
 
 ```
 
------
+---
 
 ## Architecture — Dependency Flow
 
@@ -134,7 +134,7 @@ Repository          WeatherService
 
 ```
 
------
+---
 
 ## API Endpoints
 
@@ -182,7 +182,7 @@ Repository          WeatherService
 
 ```
 
-### GET /subscriptions/{email}/weather
+### GET /subscriptions//weather
 
 Lookup key is **email** (not an ID). Returns live weather for the saved location.
 
@@ -252,7 +252,7 @@ Lookup key is **email** (not an ID). Returns live weather for the saved location
 
 ```
 
------
+---
 
 ## Exception → HTTP Mapping
 
@@ -270,7 +270,7 @@ Any other exception      → 500 Internal Server Error
 
 ```
 
------
+---
 
 ## Subscription Entity
 
@@ -321,14 +321,11 @@ public class Subscription
 Key facts:
 
 - `Id` is `int`, not Guid
-
 - Email is normalized to lowercase, Country to uppercase on construction
-
 - Private setters — entity is only created via constructor
-
 - Protected parameterless constructor exists for EF Core only
 
------
+---
 
 ## WeatherResponse DTO
 
@@ -372,7 +369,7 @@ All fields below must be present:
 
 **Sunrise/sunset:** OWM returns Unix timestamps + timezone offset. Apply the offset before formatting.
 
------
+---
 
 ## Configuration
 
@@ -402,7 +399,7 @@ All fields below must be present:
 
 Never hardcode the API key. Real key goes in `appsettings.Development.json` (gitignored).
 
------
+---
 
 ## Test Project
 
@@ -411,72 +408,50 @@ Never hardcode the API key. Real key goes in `appsettings.Development.json` (git
 **Packages (weather-subscription-api.Tests.csproj):**
 
 - `xunit` 2.4.2
-
 - `xunit.runner.visualstudio` 2.4.5
-
 - `Microsoft.NET.Test.Sdk` 17.11.1
-
 - `Moq` 4.20.72
-
 - `Castle.Core` 5.1.1 (explicit reference — required for test host)
-
 - `FluentAssertions` 6.9.0
-
 - `Microsoft.EntityFrameworkCore.InMemory` 8.0.0
 
 **Rules:**
 
 - EF InMemory only — never real SQLite in tests
-
 - Each repository test uses its own uniquely named InMemory DB (`Guid.NewGuid().ToString()`)
-
 - Mock `ISubscriptionRepository` and `IWeatherService` with Moq in service tests
-
 - Use FluentAssertions for all assertions
-
 - AAA pattern (Arrange / Act / Assert)
 
------
+---
 
 ## Development Rules
 
 1. **Always TDD** — write the failing test first, then implement to pass it
+2. **No logic in controllers** — controllers call services and return results only
+3. **EF InMemory in tests only** — never real SQLite
+4. **Never hardcode the OWM API key** — always read from configuration
+5. **One task per session** — do not implement multiple layers at once
+6. **Run `dotnet test` at the end of every task** — report full output
+7. **Do not touch files outside the current task scope**
+8. **One focused commit per task** — use the commit message specified in the task prompt
+9. **Never redirect dotnet test output to a file** — always run `dotnet test WeatherSubscription.sln` directly in the terminal, never pipe or redirect to a file. Do not use `--logger trx`. Test output stays in the terminal only.
+10. **Never commit test output files** — `test_output*.txt`, `*.trx`, `TestResults/` are gitignored and must not be staged or committed.
 
-1. **No logic in controllers** — controllers call services and return results only
-
-1. **EF InMemory in tests only** — never real SQLite
-
-1. **Never hardcode the OWM API key** — always read from configuration
-
-1. **One task per session** — do not implement multiple layers at once
-
-1. **Run `dotnet test` at the end of every task** — report full output
-
-1. **Do not touch files outside the current task scope**
-
-1. **One focused commit per task** — use the commit message specified in the task prompt
-
------
+---
 
 ## Current Implementation Status
 
-- [x] Task 1 — Domain entity (`Subscription.cs`) + interfaces — 5 tests passing
-
-- [x] Task 2 — `AppDbContext`, `SubscriptionRepository`, EF migration — 6 tests passing (11 total)
-
-- [ ] Task 3 — `WeatherService` + OWM mapping
-
+- [X] Task 1 — Domain entity (`Subscription.cs`) + interfaces — 5 tests passing
+- [X] Task 2 — `AppDbContext`, `SubscriptionRepository`, EF migration — 6 tests passing (11 total)
+- [X] Task 3 — `WeatherService` + OWM mapping
 - [ ] Task 4 — `SubscriptionService` orchestration
-
 - [ ] Task 5 — Controller + DTOs
-
 - [ ] Task 6 — `Program.cs` + DI wiring
-
 - [ ] Task 7 — Middleware + error handling
-
 - [ ] Task 8 — Frontend (Vue 3 + Vite)
 
------
+---
 
 ## Quick Commands
 
@@ -497,4 +472,3 @@ dotnet ef migrations add <Name> --project weather-subscription-api --startup-pro
 dotnet ef database update --project weather-subscription-api --startup-project weather-subscription-api
 
 ```
- 
