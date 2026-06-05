@@ -43,7 +43,7 @@ namespace WeatherSubscription.Api.Tests.Services
 
             // Assert
             response.Should().NotBeNull();
-            response.Id.Should().Be("1");
+            response.Id.Should().Be(1);
             response.Email.Should().Be(email);
             response.City.Should().Be(city);
         }

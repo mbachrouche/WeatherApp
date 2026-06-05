@@ -40,9 +40,12 @@ namespace WeatherSubscription.Api.Services
             // Map to DTO
             return new SubscriptionCreatedResponse
             {
-                Id = savedSubscription.Id.ToString(),
+                Id = savedSubscription.Id,
                 Email = savedSubscription.Email,
-                City = savedSubscription.City
+                City = savedSubscription.City,
+                Country = savedSubscription.Country,
+                ZipCode = savedSubscription.ZipCode,
+                CreatedAt = savedSubscription.CreatedAt
             };
         }
 
