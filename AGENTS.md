@@ -446,7 +446,7 @@ Never hardcode the API key. Real key goes in `appsettings.Development.json` (git
 - [X] Task 2 — `AppDbContext`, `SubscriptionRepository`, EF migration — 6 tests passing (11 total)
 - [X] Task 3 — `WeatherService` + OWM mapping — 6 tests pSSING (17 total) (-API key)
 - [X] Task 4 — `SubscriptionService` orchestration
-- [ ] Task 5 — Controller + DTOs
+- [X] Task 5 — Controller + DTOs
 - [ ] Task 6 — `Program.cs` + DI wiring
 - [ ] Task 7 — Middleware + error handling
 - [ ] Task 8 — Frontend (Vue 3 + Vite)
