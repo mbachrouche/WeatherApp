@@ -7,7 +7,7 @@ using WeatherSubscription.Api.Exceptions;
 
 namespace WeatherSubscription.Api.Services
 {
-    public class SubscriptionService
+    public class SubscriptionService : ISubscriptionService
     {
         private readonly ISubscriptionRepository _repository;
         private readonly IWeatherService _weatherService;
