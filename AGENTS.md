@@ -448,7 +448,7 @@ Never hardcode the API key. Real key goes in `appsettings.Development.json` (git
 - [X] Task 4 — `SubscriptionService` orchestration
 - [X] Task 5 — Controller + DTOs
 - [X] Task 6 — `Program.cs` + DI wiring
-- [ ] Task 7 — Middleware + error handling
+- [X] Task 7 — Middleware + error handling
 - [ ] Task 8 — Frontend (Vue 3 + Vite)
 
 ---
