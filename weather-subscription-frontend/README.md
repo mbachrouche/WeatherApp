@@ -6,7 +6,7 @@ Vue + Vite
 
 ```bash
 
-cdweather-subscription-frontend
+cd weather-subscription-frontend
 
 npminstall
 
