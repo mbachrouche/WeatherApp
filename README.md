@@ -79,21 +79,6 @@ dotnet test
 
 ---
 
-## Frontend
-
-Vue + Vite
-
-### Setup
-
-```bash
-cd weather-subscription-frontend
-npm install
-npm run dev 
-
-```
-
----
-
 ## Notes
 
 - Email is used as the unique subscription key — no authentication required.
