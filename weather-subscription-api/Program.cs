@@ -30,6 +30,8 @@ builder.Services.AddCors(options =>
 
 if (builder.Environment.IsDevelopment())
 {
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 }
 
 var app = builder.Build();
@@ -44,6 +46,8 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
