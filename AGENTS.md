@@ -442,9 +442,9 @@ Never hardcode the API key. Real key goes in `appsettings.Development.json` (git
 
 ## Current Implementation Status
 
-- [X] Task 1 — Domain entity (`Subscription.cs`) + interfaces — 5 tests passing
-- [X] Task 2 — `AppDbContext`, `SubscriptionRepository`, EF migration — 6 tests passing (11 total)
-- [X] Task 3 — `WeatherService` + OWM mapping — 6 tests pSSING (17 total) (-API key)
+- [X] Task 1 — Domain entity (`Subscription.cs`) + interfaces 
+- [X] Task 2 — `AppDbContext`, `SubscriptionRepository`, EF migration
+- [X] Task 3 — `WeatherService` + OWM mapping
 - [X] Task 4 — `SubscriptionService` orchestration
 - [X] Task 5 — Controller + DTOs
 - [X] Task 6 — `Program.cs` + DI wiring

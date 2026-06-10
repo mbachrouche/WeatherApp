@@ -4,21 +4,17 @@ A backend REST API built with ASP.NET Core (.NET 8) as part of a Praktikum techn
 
 Users can create a weather subscription for their location and retrieve live weather data via OpenWeatherMap.
 
------
+---
 
 ## Tech Stack
 
 - **Backend:** ASP.NET Core Web API, .NET 8
-
 - **Database:** SQLite via EF Core 8
-
 - **External API:** OpenWeatherMap (free tier)
-
 - **Testing:** xUnit, Moq, FluentAssertions, EF Core InMemory
-
 - **Frontend (bonus):** Vue 3 + Vite
 
------
+---
 
 ## Endpoints
 
@@ -30,14 +26,13 @@ Users can create a weather subscription for their location and retrieve live wea
 
 |GET   |`/subscriptions/{email}/weather`|Get live weather for a saved subscription|
 
------
+---
 
 ## Setup & Run
 
 ### Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8)
-
 - An [OpenWeatherMap API key](https://openweathermap.org/api) (free tier)
 
 ### Steps
@@ -82,15 +77,25 @@ dotnet test
 
 ```
 
------
+---
+
+## Frontend
+
+Vue + Vite
+
+### Setup
+
+```bash
+cd weather-subscription-frontend
+npm install
+npm run dev 
+
+```
+
+---
 
 ## Notes
 
 - Email is used as the unique subscription key — no authentication required.
-
 - OWM API key is never committed — stored in `appsettings.Development.json` (gitignored).
-
 - All tests use EF Core InMemory — no real database needed for testing.
-ASP.NET Core, an open-source web development framework | .NET
-Build web apps and services that run on Windows, Linux, and macOS using C#, HTML, CSS, and JavaScript. Get started for free on Windows, Linux, or macOS.
- 
