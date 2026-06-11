@@ -84,3 +84,5 @@ dotnet test
 - Email is used as the unique subscription key — no authentication required.
 - OWM API key is never committed — stored in `appsettings.Development.json` (gitignored).
 - All tests use EF Core InMemory — no real database needed for testing.
+
+---
