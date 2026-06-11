@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using WeatherSubscription.Api.Domain.Interfaces;
 using WeatherSubscription.Api.DTOs.Responses;
 using WeatherSubscription.Api.Exceptions;
@@ -15,11 +16,13 @@ namespace WeatherSubscription.Api.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<WeatherService> _logger;
 
-        public WeatherService(HttpClient httpClient, IConfiguration configuration)
+        public WeatherService(HttpClient httpClient, IConfiguration configuration, ILogger<WeatherService> logger)
         {
             _httpClient = httpClient;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<WeatherResponse> GetWeatherAsync(string city, string country)
@@ -29,15 +32,19 @@ namespace WeatherSubscription.Api.Services
 
             var url = $"{baseUrl}/weather?q={Uri.EscapeDataString(city)},{Uri.EscapeDataString(country)}&appid={apiKey}&units=metric";
 
+            _logger.LogInformation("Fetching weather for {City}, {Country}", city, country);
+
             var response = await _httpClient.GetAsync(url);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
+                _logger.LogWarning("City not found on OWM: {City}, {Country}", city, country);
                 throw new NotFoundException("City not found");
             }
 
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogError("OWM returned unexpected status {StatusCode}", response.StatusCode);
                 throw new WeatherApiException("Weather service unavailable");
             }
 
