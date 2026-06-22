@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using WeatherSubscription.Api.Domain.Entities;
 using WeatherSubscription.Api.Domain.Interfaces;
@@ -36,7 +37,7 @@ namespace WeatherSubscription.Api.Tests.Services
             repositoryMock.Setup(r => r.CreateAsync(It.IsAny<Subscription>()))
                 .ReturnsAsync(subscriptionWithId);
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act
             var response = await service.CreateSubscriptionAsync(email, city, country, zipCode);
@@ -62,7 +63,7 @@ namespace WeatherSubscription.Api.Tests.Services
             repositoryMock.Setup(r => r.ExistsAsync(email))
                 .ReturnsAsync(true);
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<DuplicateEmailException>(() =>
@@ -76,7 +77,7 @@ namespace WeatherSubscription.Api.Tests.Services
             var repositoryMock = new Mock<ISubscriptionRepository>();
             var weatherServiceMock = new Mock<IWeatherService>();
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() =>
@@ -90,7 +91,7 @@ namespace WeatherSubscription.Api.Tests.Services
             var repositoryMock = new Mock<ISubscriptionRepository>();
             var weatherServiceMock = new Mock<IWeatherService>();
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() =>
@@ -104,7 +105,7 @@ namespace WeatherSubscription.Api.Tests.Services
             var repositoryMock = new Mock<ISubscriptionRepository>();
             var weatherServiceMock = new Mock<IWeatherService>();
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() =>
@@ -145,7 +146,7 @@ namespace WeatherSubscription.Api.Tests.Services
             weatherServiceMock.Setup(w => w.GetWeatherAsync("Berlin", "DE"))
                 .ReturnsAsync(weatherResponse);
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act
             var response = await service.GetWeatherForEmailAsync(email);
@@ -169,7 +170,7 @@ namespace WeatherSubscription.Api.Tests.Services
             repositoryMock.Setup(r => r.GetByEmailAsync(email))
                 .ReturnsAsync((Subscription?)null);
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() =>
@@ -191,7 +192,7 @@ namespace WeatherSubscription.Api.Tests.Services
             weatherServiceMock.Setup(w => w.GetWeatherAsync("Berlin", "DE"))
                 .ThrowsAsync(new WeatherApiException("OpenWeatherMap unavailable"));
 
-            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object);
+            var service = new SubscriptionService(repositoryMock.Object, weatherServiceMock.Object, NullLogger<SubscriptionService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<WeatherApiException>(() =>

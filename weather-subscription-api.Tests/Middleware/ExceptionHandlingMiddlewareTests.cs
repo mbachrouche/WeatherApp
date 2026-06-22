@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using WeatherSubscription.Api.Exceptions;
 using WeatherSubscription.Api.Middleware;
@@ -21,7 +22,7 @@ namespace WeatherSubscription.Api.Tests.Middleware
             var requestDelegate = new Mock<RequestDelegate>();
             requestDelegate.Setup(x => x(It.IsAny<HttpContext>())).ThrowsAsync(exception);
 
-            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object);
+            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object, NullLogger<ExceptionHandlingMiddleware>.Instance);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
 
@@ -44,7 +45,7 @@ namespace WeatherSubscription.Api.Tests.Middleware
             var requestDelegate = new Mock<RequestDelegate>();
             requestDelegate.Setup(x => x(It.IsAny<HttpContext>())).ThrowsAsync(exception);
 
-            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object);
+            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object, NullLogger<ExceptionHandlingMiddleware>.Instance);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
 
@@ -67,7 +68,7 @@ namespace WeatherSubscription.Api.Tests.Middleware
             var requestDelegate = new Mock<RequestDelegate>();
             requestDelegate.Setup(x => x(It.IsAny<HttpContext>())).ThrowsAsync(exception);
 
-            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object);
+            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object, NullLogger<ExceptionHandlingMiddleware>.Instance);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
 
@@ -90,7 +91,7 @@ namespace WeatherSubscription.Api.Tests.Middleware
             var requestDelegate = new Mock<RequestDelegate>();
             requestDelegate.Setup(x => x(It.IsAny<HttpContext>())).ThrowsAsync(exception);
 
-            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object);
+            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object, NullLogger<ExceptionHandlingMiddleware>.Instance);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
 
@@ -113,7 +114,7 @@ namespace WeatherSubscription.Api.Tests.Middleware
             var requestDelegate = new Mock<RequestDelegate>();
             requestDelegate.Setup(x => x(It.IsAny<HttpContext>())).ThrowsAsync(exception);
 
-            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object);
+            var middleware = new ExceptionHandlingMiddleware(requestDelegate.Object, NullLogger<ExceptionHandlingMiddleware>.Instance);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
 

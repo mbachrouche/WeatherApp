@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Moq.Protected;
 using WeatherSubscription.Api.Exceptions;
@@ -72,7 +73,7 @@ namespace WeatherSubscription.Api.Tests.Services
                 });
 
             var httpClient = new HttpClient(mockHandler.Object);
-            var service = new WeatherService(httpClient, _mockConfig);
+            var service = new WeatherService(httpClient, _mockConfig, NullLogger<WeatherService>.Instance);
 
             // Act
             var result = await service.GetWeatherAsync("Berlin", "DE");
@@ -122,7 +123,7 @@ namespace WeatherSubscription.Api.Tests.Services
                 });
 
             var httpClient = new HttpClient(mockHandler.Object);
-            var service = new WeatherService(httpClient, _mockConfig);
+            var service = new WeatherService(httpClient, _mockConfig, NullLogger<WeatherService>.Instance);
 
             // Act
             var result = await service.GetWeatherAsync("Berlin", "DE");
@@ -161,7 +162,7 @@ namespace WeatherSubscription.Api.Tests.Services
                 });
 
             var httpClient = new HttpClient(mockHandler.Object);
-            var service = new WeatherService(httpClient, _mockConfig);
+            var service = new WeatherService(httpClient, _mockConfig, NullLogger<WeatherService>.Instance);
 
             // Act
             var result = await service.GetWeatherAsync("Berlin", "DE");
@@ -200,7 +201,7 @@ namespace WeatherSubscription.Api.Tests.Services
                 });
 
             var httpClient = new HttpClient(mockHandler.Object);
-            var service = new WeatherService(httpClient, _mockConfig);
+            var service = new WeatherService(httpClient, _mockConfig, NullLogger<WeatherService>.Instance);
 
             // Act
             var result = await service.GetWeatherAsync("Berlin", "DE");
@@ -226,7 +227,7 @@ namespace WeatherSubscription.Api.Tests.Services
                 });
 
             var httpClient = new HttpClient(mockHandler.Object);
-            var service = new WeatherService(httpClient, _mockConfig);
+            var service = new WeatherService(httpClient, _mockConfig, NullLogger<WeatherService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(
@@ -250,7 +251,7 @@ namespace WeatherSubscription.Api.Tests.Services
                 });
 
             var httpClient = new HttpClient(mockHandler.Object);
-            var service = new WeatherService(httpClient, _mockConfig);
+            var service = new WeatherService(httpClient, _mockConfig, NullLogger<WeatherService>.Instance);
 
             // Act & Assert
             await Assert.ThrowsAsync<WeatherApiException>(
